@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/sergioburia/structs_avancado/model"
+	"github.com/sergioburia/erro/model"
 )
 
 func main() {
@@ -12,16 +12,22 @@ func main() {
 	casa.Nome = "Casa Amarela"
 	casa.X = 18
 	casa.Y = 25
-	casa.SetValor(60000)
-	//casa.valor = 2
+
+	if err := casa.SetValor(1); err != nil {
+		fmt.Println("[main] Erro no valor da casa: ", err)
+		if err == model.ErrValordeImovelMuitoAlto {
+			fmt.Println("Corretor, verifique avaliação")
+		}
+		return
+	}
 
 	fmt.Printf("Casa é: %+v\r\n", casa)
-	fmt.Printf("O Valor da casa é: %+d\r\n", casa.GetValor())
-	objJSON, _ := json.Marshal(casa)
+	fmt.Printf("O Valor da casa é: %d\r\n", casa.GetValor())
+	objJSON, err := json.Marshal(casa)
+	if err != nil {
+		fmt.Println("[main] Erro no JSON: ", err.Error)
+		return
+	}
 
 	fmt.Println("A casa em JSON: ", string(objJSON))
-
-	ii := model.Imovel{X: 2, Y: 1, Nome: "batatinha"}
-	fmt.Printf("batata %d\r\n", ii.GetValor())
-
 }
